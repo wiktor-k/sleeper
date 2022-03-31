@@ -1,0 +1,26 @@
+#+TITLE: Sleeper
+
+Sample project for testing signal handling in actix-web.
+
+** Why?
+
+Before terminating a container Kubernetes sends =SIGTERM= to the
+application. The application should gracefully terminate itself, that
+is process the connections that are already opened.
+
+So it is important that the application does wait for existing
+requests to end and then shuts itself down.
+
+For more context see:
+  - https://learnk8s.io/graceful-shutdown
+  - https://ubuntu.com/blog/avoiding-dropped-connections-in-nginx-containers-with-stopsignal-sigquit
+  - https://github.com/actix/actix-web/issues/633
+
+** How?
+
+  1. Start the main application with =cargo run=.
+  2. In another terminal window execute =time curl localhost:8080/sleep=
+  3. In yet another terminal send the signal: =kill -s SIGTERM $PID=
+
+If the test succeeds the request will be processed to the end and curl
+will display =sleepy time=. Then the application will shut down.
